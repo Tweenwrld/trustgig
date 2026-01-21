@@ -1,0 +1,29 @@
+{
+    "name": "@trustgig/contracts-sdk",
+    "version": "1.0.0",
+    "description": "TypeScript SDK for TrustGig smart contracts",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsc --watch",
+        "clean": "rm -rf dist"
+    },
+    "dependencies": {
+        "@meshsdk/core": "^1.7.0",
+        "@meshsdk/core-csl": "^1.7.0",
+        "@trustgig/shared-types": "*"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "typescript": "^5.3.0"
+    },
+    "exports": {
+        ".": "./dist/index.js",
+        "./escrow": "./dist/escrow/index.js",
+        "./reputation": "./dist/reputation/index.js",
+        "./multisig": "./dist/multisig/index.js",
+        "./dispute": "./dist/dispute/index.js",
+        "./credentials": "./dist/credentials/index.js"
+    }
+}
