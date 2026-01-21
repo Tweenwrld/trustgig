@@ -1,0 +1,16 @@
+name = "trustgig/trustgig"
+version = "1.0.0"
+plutus = "v3"
+compiler = "v1.1.21"
+license = "Apache-2.0"
+description = "TrustGig smart contracts for decentralized gig economy"
+
+[repository]
+user = "trustgig"
+project = "trustgig"
+platform = "github"
+
+[[dependencies]]
+name = "aiken-lang/stdlib"
+version = "2.1.0"
+source = "github"
