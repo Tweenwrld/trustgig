@@ -1,0 +1,235 @@
+// This is your Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// User model
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Wallet
+  walletAddress   String  @unique
+  stakingAddress  String?
+
+  // Profile
+  name   String
+  email  String? @unique
+  phone  String?
+  avatar String?
+  bio    String?
+
+  // Role
+  role UserRole @default(WORKER)
+
+  // Worker-specific
+  skills       String[]
+  hourlyRate   Float?
+  availability Boolean  @default(true)
+
+  // Verification
+  verificationStatus VerificationStatus @default(UNVERIFIED)
+  verifiedAt         DateTime?
+
+  // Reputation (synced from blockchain)
+  reputationScore Int?
+  completedJobs   Int      @default(0)
+  totalEarned     Float    @default(0)
+
+  // Metadata
+  lastActiveAt DateTime?
+
+  // Relations
+  clientJobs     Job[]             @relation("ClientJobs")
+  workerJobs     Job[]             @relation("WorkerJobs")
+  credentials    UserCredential[]
+  transactions   Transaction[]     @relation("TransactionInitiator")
+  receivedTxs    Transaction[]     @relation("TransactionRecipient")
+
+  @@index([walletAddress])
+  @@index([verificationStatus])
+}
+
+enum UserRole {
+  CLIENT
+  WORKER
+  BOTH
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+// Job model
+model Job {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Basic info
+  title       String
+  description String
+  category    JobCategory
+  status      JobStatus   @default(ACTIVE)
+
+  // Parties
+  clientId String
+  client   User   @relation("ClientJobs", fields: [clientId], references: [id])
+  workerId String?
+  worker   User?   @relation("WorkerJobs", fields: [workerId], references: [id])
+
+  // Financial
+  budget Float
+
+  // Location
+  location Json
+
+  // Timing
+  deadline          DateTime
+  estimatedDuration Int?
+  startedAt         DateTime?
+  completedAt       DateTime?
+
+  // Blockchain
+  escrowTxHash String?
+  escrowUtxo   String?
+
+  // Relations
+  milestones   JobMilestone[]
+  transactions Transaction[]
+
+  @@index([clientId])
+  @@index([workerId])
+  @@index([status])
+  @@index([category])
+}
+
+enum JobCategory {
+  CONSTRUCTION
+  PLUMBING
+  ELECTRICAL
+  CARPENTRY
+  PAINTING
+  CLEANING
+  LANDSCAPING
+  MOVING
+  DELIVERY
+  OTHER
+}
+
+enum JobStatus {
+  DRAFT
+  ACTIVE
+  IN_PROGRESS
+  DISPUTED
+  COMPLETED
+  CANCELLED
+}
+
+// Job Milestone model
+model JobMilestone {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  jobId String
+  job   Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  description String
+  amount      Float
+  order       Int
+
+  completed   Boolean   @default(false)
+  approved    Boolean   @default(false)
+  completedAt DateTime?
+  approvedAt  DateTime?
+
+  @@index([jobId])
+}
+
+// User Credential model
+model UserCredential {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type           String
+  issuer         String
+  issuedAt       DateTime
+  expiresAt      DateTime?
+  verified       Boolean  @default(false)
+  verifiedAt     DateTime?
+  credentialHash String?
+
+  @@index([userId])
+  @@index([verified])
+}
+
+// Transaction model
+model Transaction {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Transaction details
+  txHash String? @unique
+  type   TransactionType
+  status TransactionStatus @default(PENDING)
+
+  // Parties
+  initiatorId String
+  initiator   User   @relation("TransactionInitiator", fields: [initiatorId], references: [id])
+  recipientId String?
+  recipient   User?   @relation("TransactionRecipient", fields: [recipientId], references: [id])
+
+  // Amount
+  amount Float?
+
+  // Related entities
+  jobId       String?
+  job         Job?    @relation(fields: [jobId], references: [id])
+  milestoneId String?
+
+  // Metadata
+  metadata     Json?
+  errorMessage String?
+
+  // Timestamps
+  submittedAt  DateTime?
+  confirmedAt  DateTime?
+
+  @@index([initiatorId])
+  @@index([recipientId])
+  @@index([jobId])
+  @@index([status])
+  @@index([type])
+}
+
+enum TransactionType {
+  ESCROW_CREATE
+  ESCROW_RELEASE
+  ESCROW_REFUND
+  MILESTONE_COMPLETE
+  DISPUTE_INITIATE
+  DISPUTE_RESOLVE
+  REPUTATION_UPDATE
+  CREDENTIAL_VERIFY
+}
+
+enum TransactionStatus {
+  PENDING
+  SUBMITTED
+  CONFIRMED
+  FAILED
+}
