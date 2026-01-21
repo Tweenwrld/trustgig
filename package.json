@@ -1,0 +1,51 @@
+{
+  "name": "trustgig",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Decentralized gig economy platform on Cardano",
+  "scripts": {
+    "dev": "next dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean",
+    "contracts:build": "bash scripts/deploy/compile-contracts.sh",
+    "contracts:test": "tsx scripts/testing/contract-test-runner.ts",
+    "contracts:deploy:testnet": "tsx scripts/deploy/deploy-testnet.ts",
+    "contracts:deploy:mainnet": "tsx scripts/deploy/deploy-mainnet.ts",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "utils:generate-addresses": "tsx scripts/utilities/generate-addresses.ts",
+    "utils:fund-wallet": "tsx scripts/utilities/fund-testnet-wallet.ts"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "19.2.9",
+    "prisma": "^5.7.0",
+    "tsx": "^4.7.0",
+    "turbo": "^1.11.0",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "@meshsdk/core": "^1.7.0",
+    "@meshsdk/core-csl": "^1.7.0",
+    "@prisma/client": "^5.7.0",
+    "@radix-ui/react-slot": "^1.2.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.562.0",
+    "next": "15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.6.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  }
+}
