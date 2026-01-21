@@ -1,0 +1,10 @@
+{
+  "name": "@trustgig/tsconfig",
+  "version": "1.0.0",
+  "description": "Shared TypeScript configuration for TrustGig",
+  "files": [
+    "base.json",
+    "nextjs.json",
+    "library.json"
+  ]
+}
