@@ -1,0 +1,16 @@
+{
+  "name": "@trustgig/eslint-config",
+  "version": "1.0.0",
+  "description": "Shared ESLint configuration for TrustGig",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint-config-next": "^16.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-react": "^7.33.0"
+  }
+}
